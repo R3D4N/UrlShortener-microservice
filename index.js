@@ -82,11 +82,6 @@ app.post('/api/shorturl', (req, res) => {
   };
 });
 
-app.get('/api/test', (req, res) => {
-  console.log(testFind())
-  res.json({prueba:0})
-});
-
 // return url
 app.get('/api/shorturl/:id', (req, res) => {
   shortUrl.findOne({shortUrlId: req.params.id}, (err, data)=>{
