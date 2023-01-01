@@ -84,7 +84,14 @@ app.get('/api/test', (req, res) => {
 
 // return url
 app.get('/api/shorturl/:id', (req, res) => {
-
+  shortUrl.findOne({shortUrlId: req.params.id}, (err, data)=>{
+    if (err) console.error(err);
+    if (data === null) {
+      res.json({error:"No short URL found for the given input"});
+    }else{
+      res.redirect(data.originUrl);
+    }
+  });
 });
 
 app.listen(port, function () {
