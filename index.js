@@ -41,7 +41,8 @@ app.post('/api/shorturl', (req, res) => {
   let id = 1;
   if (patron.test(originUrl)) {
     let hostname = originUrl.slice(originUrl.indexOf('//') + 2);
-    hostname = hostname.slice(0, hostname.indexOf('/'));
+    let indexOption = (hostname.indexOf('/') == -1) ? undefined : hostname.indexOf('/');
+    hostname = hostname.slice(0, indexOption);
     dns.lookup(hostname, (err, address) => {
       if (err) {
         res.json({ error: 'invalid url' });
