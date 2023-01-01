@@ -47,6 +47,7 @@ app.post('/api/shorturl', (req, res) => {
         res.json({ error: 'invalid url' });
         console.error(err)
       } else {
+        // this method is to check if there is any url in database
         shortUrl.find().sort({ shortUrlId: -1 }).limit(1).exec((err, data) => {
           if (err) console.error(err)
           if (Object.keys(data).length === 0) {
@@ -56,13 +57,21 @@ app.post('/api/shorturl', (req, res) => {
               console.log(data);
             })
           } else {
-            id = id + data[0].shortUrlId;
-            let short_url = saveUrl(originUrl, id);
-            short_url.save((err, data) => {
+            // check if the url exists in database
+            shortUrl.findOne({originUrl: originUrl}, (err, urlFound)=>{
               if (err) console.error(err);
-              console.log(data);
+              if(urlFound == null){
+                id = id + data[0].shortUrlId;
+                let short_url = saveUrl(originUrl, id);
+                short_url.save((err, data) => {
+                  if (err) console.error(err);
+                  console.log(data);
+                });
+                res.json({ original_url: originUrl, short_url: id })
+              }else{
+                res.json({ original_url: originUrl, short_url: urlFound.shortUrlId })
+              }
             });
-            res.json({ original_url: originUrl, short_url: id })
           }
         });
       }
@@ -73,13 +82,8 @@ app.post('/api/shorturl', (req, res) => {
 });
 
 app.get('/api/test', (req, res) => {
-  shortUrl.find().sort({ shortUrlId: -1 }).limit(1).exec((err, data) => {
-    if (err) console.error(err)
-    if (Object.keys(data).length === 0) {
-      console.log(12)
-    }
-    console.log(data + typeof (data))
-  });
+  console.log(testFind())
+  res.json({prueba:0})
 });
 
 // return url
